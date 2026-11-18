@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>영칼로리포케 | 나만의 포케 만들기</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app" id="app">
+      <div class="game-layout">
+        <section class="tray-section" aria-label="재료 선택">
+          <div class="tray-grid" id="trayGrid"></div>
+          <div class="tray-actions">
+            <button type="button" id="prevBtn" class="image-button" aria-label="이전 재료 보기">
+              <img src="images/btn-prev.png" alt="" onerror="this.style.display='none'" /><span>이전</span>
+            </button>
+            <button type="button" id="nextBtn" class="image-button" aria-label="다음 재료 보기">
+              <img src="images/btn-next.png" alt="" onerror="this.style.display='none'" /><span>다음</span>
+            </button>
+          </div>
+        </section>
+        <section class="bowl-section" aria-label="포케 그릇">
+          <div class="bowl-frame" id="bowlFrame">
+            <canvas id="pokeCanvas" aria-label="재료를 드래그해 배치하는 포케 그릇"></canvas>
+          </div>
+        </section>
+        <div class="bottom-actions">
+          <button type="button" id="resetBtn" class="image-button reset-button" aria-label="다시 만들기">
+            <img src="images/btn-reset.png" alt="" onerror="this.style.display='none'" /><span>다시 만들기</span>
+          </button>
+          <button type="button" id="completeBtn" class="image-button complete-button" aria-label="포케 완성하기">
+            <img src="images/btn-complete.png" alt="" onerror="this.style.display='none'" /><span>완료하기</span>
+          </button>
+        </div>
+      </div>
+      <p class="help" id="help" aria-live="polite"></p>
+      <!-- 기존 JS 영양 집계 로직 호환용: 화면에는 표시하지 않음 -->
+      <div class="receipt-side hidden" aria-hidden="true">
+        <div id="receiptItems"></div><span id="receiptCount"></span>
+      </div>
+<section class="result hidden" id="result">
+        <canvas id="resultCanvas"></canvas>
+        <div id="nutritionInfo" class="nutrition"></div>
+        <p class="notice">
+          ※ 본 영양 정보는 임의로 설정된 참고용 수치로, 실제 영양성분과 차이가
+          있을 수 있습니다.
+        </p>
+        <div class="controls">
+          <button id="saveBtn" class="primary">이미지 저장하기</button
+          ><button id="restartBtn" class="light">다시 만들기</button>
+        </div>
+        <a
+          href="https://연결할-링크-주소"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="share-poke-btn"
+          >나만의 포케 자랑하기</a
+        >
+        <section class="honor-section" aria-labelledby="honorTitle">
+          <h2 id="honorTitle">🏆 명예의 포케 전당 🏆</h2>
+          <div id="honorGrid" class="honor-grid" aria-live="polite"></div>
+          <p id="honorEmpty" class="honor-empty hidden">아직 등록된 포케 이미지가 없어요.</p>
+          <div id="honorSentinel" class="honor-sentinel" aria-hidden="true"></div>
+        </section>
+      </section>
+      <div
+        class="dialog hidden"
+        id="confirmDialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="dialogTitle"
+      >
+        <div class="dialog-card">
+          <h2 id="dialogTitle">전체 초기화할까요?</h2>
+          <p>선택한 재료가 모두 사라져요!</p>
+          <div class="controls">
+            <button id="cancelReset" class="light">취소</button
+            ><button id="confirmReset" class="primary">초기화</button>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="data/ingredients.js"></script>
+    <script src="data/nutrition.js"></script>
+    <script src="data/honor-poke.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>
