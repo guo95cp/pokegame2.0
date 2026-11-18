@@ -640,3 +640,17 @@ body {
 .honor-sentinel {
   height: 2px;
 }
+
+/* 파란글자 오류 */
+.tray-item,
+.tray-item span {
+  color: #242922 !important;
+}
+
+.result .controls button {
+  color: #242922 !important;
+}
+
+.bottom-actions button {
+  color: #242922 !important;
+}
