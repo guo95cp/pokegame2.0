@@ -190,9 +190,9 @@ function draw() {
       img.alt = "";
       img.src = item.tray;
       img.onerror = () => { btn.classList.add("missing"); img.alt = "이미지 없음"; };
-      const label = document.createElement("span");
-      label.textContent = item.name;
-      btn.append(img, label);
+      // const label = document.createElement("span");
+      // label.textContent = item.name;
+      btn.append(img);
       btn.addEventListener("pointerdown", (ev) => startNew(ev, id));
       grid.appendChild(btn);
       loadImage(item.food);

@@ -23,17 +23,25 @@ button {
 }
 body {
   background: #393a36;
+  margin: 0;
 }
 .app {
   width: 100%;
+  max-width: 430px;
   min-height: 100svh;
   height: 100svh;
+
+  margin: 0 auto;
   position: relative;
-  overflow: hidden;
-  background: #b4afa5 url("images/background.png") center center/cover no-repeat;
+
+  background-color: #000;
+  background-image: url("images/background.png");
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+
   display: flex;
   flex-direction: column;
-  padding: clamp(8px, 1.2vh, 16px) clamp(12px, 2vw, 32px) 8px;
 }
 .topbar {
   height: clamp(30px, 6vh, 100px);
@@ -596,6 +604,7 @@ body {
     gap: 2px;
   }
   .tray-item span {
+    display: none;
     font-size: 9px;
   }
   .bowl-frame {
@@ -651,10 +660,7 @@ body {
 }
 
 /* 파란글자 오류 */
-.tray-item,
-.tray-item span {
-  color: #242922 !important;
-}
+
 
 .result .controls button {
   color: #242922 !important;
