@@ -609,10 +609,19 @@ body {
   margin: 32px auto 55px;
 }
 .honor-section h2 {
-  font-size: clamp(21px, 5vw, 28px);
-  color: #ffffff;
-  margin: 0 0 18px;
-  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 0 20px;
+}
+/* 명예의 포케 제목 이미지 */
+.honor-section h2 img {
+  display: block;
+  width: 40%;
+  max-width: 350px;
+  height: auto;
+  object-fit: contain;
 }
 .honor-grid {
   display: grid;
