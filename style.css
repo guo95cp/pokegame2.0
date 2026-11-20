@@ -651,14 +651,17 @@ body {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+  background: #ffffffa8;
+  border-radius: 10px;
+
 }
 .honor-card {
   margin: 0;
   min-width: 0;
   aspect-ratio: 1;
   overflow: hidden;
-  background: #ffffffa8;
-  border-radius: 10px;
+  /* background: #ffffffa8; */
+  /* border-radius: 10px; */
 }
 .honor-card img {
   display: block;
