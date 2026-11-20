@@ -193,6 +193,21 @@ body {
   touch-action: none;
   position: relative;
 }
+.trash-zone {
+  position: absolute;
+  top: 3%;
+  left: 3%;
+  width: 15%;
+  aspect-ratio: 1;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.trash-zone img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 #pokeCanvas {
   width: 100%;
   height: 100%;
@@ -344,10 +359,10 @@ body {
   font-weight: 700;
 }
 .primary {
-  background: #f7d58a;
+  background: #e8f7c4;
 }
 .light {
-  background: #eebf59;
+  background: #bdda75;
 }
 .result {
   position: fixed;
@@ -487,7 +502,7 @@ body {
   width: 100%;
   max-width: 640px;
   margin: 0 auto;
-  gap: clamp(8px, 1.8vh, 18px);
+  /* gap: clamp(8px, 1.8vh, 18px); */
   flex: none;
 }
 .tray-section {
@@ -627,7 +642,7 @@ body {
 /* 명예의 포케 제목 이미지 */
 .honor-section h2 img {
   display: block;
-  width: 40%;
+  width: 60%;
   max-width: 350px;
   height: auto;
   object-fit: contain;

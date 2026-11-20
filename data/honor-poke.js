@@ -2,7 +2,7 @@
 // 예: "poke-01.png", "poke-02.jpg"
 window.HONOR_POKE_IMAGES = [
   "01.png",
-  "2.png",
+  "02.png",
   "03.png",
   "04.png",
 ];

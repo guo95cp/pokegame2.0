@@ -44,6 +44,21 @@
   function inside(p) {
     return Math.hypot(p.x - bowl.x, p.y - bowl.y) <= bowl.r;
   }
+  function insideTrash(ev) {
+  if (!ev) return false;
+
+  const trash = $("trashZone");
+  if (!trash) return false;
+
+  const rect = trash.getBoundingClientRect();
+
+  return (
+    ev.clientX >= rect.left &&
+    ev.clientX <= rect.right &&
+    ev.clientY >= rect.top &&
+    ev.clientY <= rect.bottom
+  );
+}
 
 function draw() {
   if (!bowlReady) return;
@@ -90,29 +105,61 @@ function draw() {
   }
 }
 
-  function stopDrag(cancel, ev) {
-    if (!drag || (ev && ev.pointerId !== drag.pointerId)) return;
-    const d = drag;
-    drag = null;
-    if (d.ghost) d.ghost.remove();
-    if (d.kind === "new") {
-      if (!cancel && ev) {
-        const p = point(ev);
-        if (inside(p) && placed.length < 20) placed.push({ id: d.id, x: p.x, y: p.y, z: ++nextZ });
-      }
-    } else {
-      const p = ev ? point(ev) : d.original;
-      if (cancel || !inside(p)) {
-        d.item.x = d.original.x;
-        d.item.y = d.original.y;
-      } else {
-        d.item.x = p.x;
-        d.item.y = p.y;
+
+function stopDrag(cancel, ev) {
+  if (!drag || (ev && ev.pointerId !== drag.pointerId)) return;
+
+  const d = drag;
+  drag = null;
+
+  if (d.ghost) d.ghost.remove();
+
+  if (d.kind === "new") {
+    // 트레이에서 새 재료를 가져오는 경우
+    if (!cancel && ev) {
+      const p = point(ev);
+
+      if (
+        !insideTrash(ev) &&
+        inside(p) &&
+        placed.length < 20
+      ) {
+        placed.push({
+          id: d.id,
+          x: p.x,
+          y: p.y,
+          z: ++nextZ
+        });
       }
     }
-    draw();
-    renderReceipt();
+  } else {
+    // 이미 그릇에 담긴 재료를 이동하는 경우
+    const p = ev ? point(ev) : d.original;
+
+    if (!cancel && insideTrash(ev)) {
+      // 휴지통에 놓으면 재료 삭제
+      const index = placed.indexOf(d.item);
+
+      if (index !== -1) {
+        placed.splice(index, 1);
+      }
+
+    } else if (cancel || !inside(p)) {
+      // 그릇 바깥에 놓으면 원래 위치로 복귀
+      d.item.x = d.original.x;
+      d.item.y = d.original.y;
+
+    } else {
+      // 그릇 안에서 위치 변경
+      d.item.x = p.x;
+      d.item.y = p.y;
+    }
   }
+
+  draw();
+  renderReceipt();
+}
+
   function moveDrag(ev) {
     if (!drag || drag.pointerId !== ev.pointerId) return;
     if (drag.kind === "new") {
@@ -249,21 +296,21 @@ function draw() {
     g.fillText("포케 이미지를 저장하여 하단 링크에 올려주세요!", 500, 151);
     g.font = "semibold 20px Paperlogy";
     g.fillText("추첨을 통해 영칼로리포케 식사권을 드립니다!", 500, 197); 
-    g.drawImage(canvas, 80, 220, 840, 840);
+    g.drawImage(canvas, 80, 200, 840, 840);
     const t = totals();
     g.fillStyle = "#173d1c";
     g.font = "700 34px Paperlogy";
     g.fillText(
       `${format(t.calories)} kcal  |  탄수화물 ${format(t.carbohydrate)}g  |  단백질 ${format(t.protein)}g`,
       500,
-      1100
+      1130
     );
 
     g.font = "500 28px Paperlogy";
     g.fillText(
       `지방 ${format(t.fat)}g  |  당류 ${format(t.sugar)}g  |  나트륨 ${format(t.sodium)}mg`,
       500,
-      1150
+      1170
     );
         g.font = "22px Paperlogy";
         g.fillStyle = "#756e61";
