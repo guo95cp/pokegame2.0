@@ -630,7 +630,7 @@ body {
 /* 결과 화면 하단: 명예의 포케 */
 .honor-section {
   max-width: 500px;
-  /* margin: 32px auto 55px; */
+  margin: 32px auto 55px;
 }
 .honor-section h2 {
   display: flex;
@@ -652,7 +652,7 @@ body {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
-  background: #ffffffa8;
+  background: #fff3daa8;
   border-radius: 10px;
 
 }
@@ -687,4 +687,57 @@ body {
 
 .bottom-actions button {
   color: #242922 !important;
+}
+
+
+/* 결과 화면 버튼 크기 및 배경 수정 */
+
+/* 이미지 저장하기 + 다시 만들기 */
+.result .result-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  max-width: 320px;
+  margin: 0px auto;
+}
+
+/* 모든 결과 이미지 버튼 */
+.result .result-image-btn {
+  flex: 0 1 auto;
+  width: auto;
+  padding: 0;
+  background: transparent;
+  background-image: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* 이미지 저장 / 다시 만들기 크기 */
+.result .result-buttons .result-image-btn {
+  width: 145px;
+  max-width: 145px;
+}
+
+/* 버튼 이미지 */
+.result .result-image-btn img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* 나만의 포케 자랑하기 */
+.result .share-poke-btn.result-image-btn {
+  display: block;
+  width: 290px;
+  max-width: 100%;
+  margin: 0px auto 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
