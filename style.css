@@ -630,24 +630,25 @@ body {
 /* 결과 화면 하단: 명예의 포케 */
 .honor-section {
   max-width: 500px;
-  margin: 32px auto 55px;
+  /* margin: 32px auto 55px; */
 }
 .honor-section h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin: 0 0 20px;
+  /* gap: 8px;
+  margin: 0 0 20px; */
 }
 /* 명예의 포케 제목 이미지 */
 .honor-section h2 img {
   display: block;
-  width: 60%;
+  width: 50%;
   max-width: 350px;
   height: auto;
   object-fit: contain;
 }
 .honor-grid {
+    margin-top: -45px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
