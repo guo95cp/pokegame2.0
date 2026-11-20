@@ -293,7 +293,7 @@ function stopDrag(cancel, ev) {
     g.fillText("나만의 포케 완성!🥬", 500, 98);
     g.font = "32px Paperlogy";
     g.font = "semibold 20px Paperlogy";
-    g.fillText("포케 이미지를 저장하여 하단 링크에 올려주세요!", 500, 151);
+    g.fillText("포케 이미지를 캡처 혹은 저장하여 자랑해주세요!", 500, 151);
     g.font = "semibold 20px Paperlogy";
     g.fillText("추첨을 통해 영칼로리포케 식사권을 드립니다!", 500, 197); 
     g.drawImage(canvas, 80, 200, 840, 840);
