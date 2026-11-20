@@ -11,7 +11,7 @@
   const images = new Map();
   const failed = new Set();
   const allIngredientIds = [...new Set(stages.flatMap(stage => stage.items))];
-  const pageSize = 15;
+  const pageSize = 10;
   let step = 0,
     placed = [],
     drag = null,

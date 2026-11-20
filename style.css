@@ -514,7 +514,7 @@ body {
 .tray-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  grid-template-rows: repeat(3, auto);
+  grid-template-rows: repeat(2, auto);
   gap: clamp(3px, 1vw, 10px);
   padding: 0;
   overflow: visible;
