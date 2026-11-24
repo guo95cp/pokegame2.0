@@ -111,7 +111,7 @@ window.NUTRITION = {
   },
 
   // 두부
-  P두부: {
+  T두부: {
     servingGram: 10,
     calories: 8,
     carbohydrate: 0.2,
