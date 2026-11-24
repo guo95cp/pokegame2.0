@@ -648,13 +648,12 @@ body {
   object-fit: contain;
 }
 .honor-grid {
-    margin-top: -45px;
+  margin-top: -45px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   background: #fff3daa8;
   border-radius: 10px;
-
 }
 .honor-card {
   margin: 0;
@@ -680,7 +679,6 @@ body {
 
 /* 파란글자 오류 */
 
-
 .result .controls button {
   color: #242922 !important;
 }
@@ -688,7 +686,6 @@ body {
 .bottom-actions button {
   color: #242922 !important;
 }
-
 
 /* 결과 화면 버튼 크기 및 배경 수정 */
 
@@ -740,4 +737,99 @@ body {
   background: transparent;
   border: none;
   box-shadow: none;
+}
+
+/* Interactive upgrade — original layout and assets remain unchanged */
+.tray-item {
+  -webkit-tap-highlight-color: transparent;
+}
+.tray-item img {
+  transition: filter 0.18s ease;
+}
+@media (hover: hover) {
+  .tray-item:hover img {
+    filter: brightness(1.08) drop-shadow(0 3px 4px #0003);
+  }
+}
+.drag-ghost {
+  transform: translate(-50%, -50%) scale(1.08) rotate(-7deg);
+  filter: drop-shadow(0 12px 8px #0005);
+}
+/* .bowl-frame::after {
+  content: "";
+  position: absolute;
+  inset: 5.7%;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s;
+  box-shadow:
+    0 0 0 2px #c8f578,
+    0 0 16px #b8ef6970;
+} */
+.bowl-frame.is-target::after {
+  opacity: 1;
+}
+.trash-zone {
+  transition:
+    filter 0.18s,
+    transform 0.18s;
+}
+.trash-zone.is-target {
+  transform: scale(1.13);
+  filter: drop-shadow(0 0 6px #f6a36b);
+}
+.absorb-ghost {
+  position: fixed;
+  z-index: 70;
+  pointer-events: none;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
+}
+.celebration {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 12;
+}
+.celebration i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 12px;
+  border-radius: 2px;
+  animation: poke-confetti 0.65s ease-out both;
+}
+@keyframes poke-confetti {
+  from {
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  to {
+    transform: translate(var(--dx), var(--dy)) rotate(var(--spin));
+    opacity: 0;
+  }
+}
+.finishing .game-layout {
+  pointer-events: none;
+}
+.finishing .tray-section,
+.finishing .bottom-actions {
+  opacity: 0.45;
+  transition: opacity 0.25s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .celebration i {
+    animation: none;
+    display: none;
+  }
+  /* .bowl-frame::after,
+  .trash-zone,
+  .tray-item img {
+    transition: none;
+  } */
 }

@@ -18,6 +18,48 @@
     nextZ = 0,
     bowlReady = false;
 
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+  const motion = new Map();
+  let frame = 0, finishing = false;
+  const bowlFrame = $("bowlFrame"), trash = $("trashZone");
+  function animate(el, frames, duration = 300) {
+    if (!el || reduced.matches || !el.animate) return;
+    return el.animate(frames, {duration, easing:"cubic-bezier(.2,.75,.25,1)"});
+  }
+  function tick() {
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0; draw();
+      if (motion.size) tick();
+    });
+  }
+  function land(item) {
+    if (reduced.matches) return;
+    motion.set(item, {start: performance.now(), duration: 380, type:"land"});
+    tick();
+  }
+  function clearMotion() { motion.clear(); }
+  function highlight(ev) {
+    const bin = drag && drag.kind === "existing" && insideTrash(ev);
+    trash.classList.toggle("is-target", !!bin);
+    bowlFrame.classList.toggle("is-target", !!drag && !bin && inside(point(ev)));
+  }
+  function absorb(item, ev) {
+    if (reduced.matches) return;
+    const r = trash.getBoundingClientRect();
+    const ghost = document.createElement("img");
+    ghost.className = "absorb-ghost";
+    ghost.src = ingredients[item.id].food;
+    const size = canvas.getBoundingClientRect().width * ingredients[item.id].size * 1.5;
+    Object.assign(ghost.style, {width:size+"px",height:size+"px",left:ev.clientX+"px",top:ev.clientY+"px"});
+    document.body.append(ghost);
+    const a = animate(ghost, [
+      {transform:"translate(-50%,-50%) scale(1)",opacity:1},
+      {transform:`translate(calc(-50% + ${r.left+r.width/2-ev.clientX}px),calc(-50% + ${r.top+r.height/2-ev.clientY}px)) scale(.05) rotate(45deg)`,opacity:0}
+    ], 300);
+    if (a) a.finished.then(()=>ghost.remove(),()=>ghost.remove()); else ghost.remove();
+    animate(trash,[{transform:"scale(1)"},{transform:"scale(1.18)"},{transform:"scale(.94)"},{transform:"scale(1)"}],350);
+  }
   function loadImage(url) {
     if (images.has(url)) return Promise.resolve(images.get(url));
     return new Promise((resolve) => {
@@ -94,14 +136,33 @@ function draw() {
       height = size;
     }
 
-    // 이미지 중심 기준 배치
+    let scale = 1, lift = 0, angle = 0;
+    const m = motion.get(p);
+    if (m) {
+      const t = Math.min(1, (performance.now()-m.start)/m.duration);
+      if (t >= 1) motion.delete(p);
+      else {
+        scale = 1 + .25 * Math.pow(1-t, 2) - .09 * Math.sin(Math.PI*t*2) * (1-t);
+        lift = -imageSize * .065 * Math.pow(1-t, 3);
+        angle = -.10 * (1-t);
+      }
+    }
+    if (drag && drag.kind === "existing" && drag.item === p) {
+      scale = 1.08; angle = -.07;
+    }
+    ctx.save();
+    ctx.translate(p.x*imageSize,p.y*imageSize+lift);
+    ctx.rotate(angle);
+    ctx.scale(scale,scale);
+    if (scale !== 1) { ctx.shadowColor="#0004"; ctx.shadowBlur=14; ctx.shadowOffsetY=9; }
     ctx.drawImage(
       img,
-      p.x * imageSize - width / 2,
-      p.y * imageSize - height / 2,
+      -width / 2,
+      -height / 2,
       width,
       height
     );
+    ctx.restore();
   }
 }
 
@@ -111,6 +172,8 @@ function stopDrag(cancel, ev) {
 
   const d = drag;
   drag = null;
+  bowlFrame.classList.remove("is-target");
+  trash.classList.remove("is-target");
 
   if (d.ghost) d.ghost.remove();
 
@@ -124,12 +187,14 @@ function stopDrag(cancel, ev) {
         inside(p) &&
         placed.length < 20
       ) {
-        placed.push({
+        const added = {
           id: d.id,
           x: p.x,
           y: p.y,
           z: ++nextZ
-        });
+        };
+        placed.push(added);
+        land(added);
       }
     }
   } else {
@@ -141,6 +206,8 @@ function stopDrag(cancel, ev) {
       const index = placed.indexOf(d.item);
 
       if (index !== -1) {
+        absorb(d.item, ev);
+        motion.delete(d.item);
         placed.splice(index, 1);
       }
 
@@ -153,6 +220,7 @@ function stopDrag(cancel, ev) {
       // 그릇 안에서 위치 변경
       d.item.x = p.x;
       d.item.y = p.y;
+      land(d.item);
     }
   }
 
@@ -162,6 +230,7 @@ function stopDrag(cancel, ev) {
 
   function moveDrag(ev) {
     if (!drag || drag.pointerId !== ev.pointerId) return;
+    highlight(ev);
     if (drag.kind === "new") {
       drag.ghost.style.left = ev.clientX + "px";
       drag.ghost.style.top = ev.clientY + "px";
@@ -178,20 +247,22 @@ function stopDrag(cancel, ev) {
   window.addEventListener("blur", () => stopDrag(true));
 
   function startNew(ev, id) {
-    if (!bowlReady || drag || ev.button !== 0) return;
+    if (!bowlReady || drag || finishing || ev.button !== 0) return;
     if (placed.length >= 20) { $("help").textContent = "재료는 최대 20개까지 선택할 수 있어요."; return; }
     ev.preventDefault();
     const item = ingredients[id];
     const ghost = document.createElement("img");
     ghost.className = "drag-ghost";
     ghost.src = item.food;
-    const width = canvas.getBoundingClientRect().width * item.size;
+    const width = canvas.getBoundingClientRect().width * item.size * 1.5;
     ghost.style.width = width + "px";
     ghost.style.height = width + "px";
     ghost.style.left = ev.clientX + "px";
     ghost.style.top = ev.clientY + "px";
     document.body.appendChild(ghost);
     drag = { kind: "new", id, pointerId: ev.pointerId, ghost };
+    animate(ev.currentTarget,[{transform:"scale(1)"},{transform:"scale(1.12)"},{transform:"scale(.95)"},{transform:"scale(1)"}],300);
+    animate(ghost,[{transform:"translate(-50%,-50%) scale(.85)"},{transform:"translate(-50%,-50%) scale(1.08) rotate(-7deg)"}],180);
   }
   function hit(p) {
     for (let i = placed.length - 1; i >= 0; i--) {
@@ -203,11 +274,12 @@ function stopDrag(cancel, ev) {
     return null;
   }
   canvas.addEventListener("pointerdown", (ev) => {
-    if (drag || ev.button !== 0) return;
+    if (drag || finishing || ev.button !== 0) return;
     const found = hit(point(ev));
     if (!found) return;
     ev.preventDefault();
     const obj = found.obj;
+    motion.delete(obj);
     placed.splice(found.i, 1);
     placed.push(obj);
     obj.z = ++nextZ;
@@ -220,7 +292,7 @@ function stopDrag(cancel, ev) {
     draw();
   });
 
-  function renderStep() {
+  function renderStep(direction = 0) {
     const grid = $("trayGrid");
     grid.replaceChildren();
     const pageCount = Math.max(1, Math.ceil(allIngredientIds.length / pageSize));
@@ -244,6 +316,7 @@ function stopDrag(cancel, ev) {
       grid.appendChild(btn);
       loadImage(item.food);
     }
+    if (direction) animate(grid,[{transform:`translateX(${direction*24}px)`,opacity:.25},{transform:"translateX(0)",opacity:1}],260);
     $("prevBtn").disabled = step === 0;
     $("nextBtn").disabled = step >= pageCount - 1;
   }
@@ -280,6 +353,7 @@ function stopDrag(cancel, ev) {
   }
   const format = (n) => Number(n.toFixed(1)).toLocaleString("ko-KR");
   function drawResult() {
+    clearMotion();
     draw();
     const c = $("resultCanvas"),
       g = c.getContext("2d");
@@ -378,19 +452,51 @@ function stopDrag(cancel, ev) {
   $("prevBtn").onclick = () => {
     if (step > 0) {
       step--;
-      renderStep();
+      renderStep(-1);
     }
   };
   $("nextBtn").onclick = () => {
     if (step < Math.ceil(allIngredientIds.length / pageSize) - 1) {
       step++;
-      renderStep();
+      renderStep(1);
     }
   };
-  $("completeBtn").onclick = showResult;
+  $("completeBtn").onclick = async () => {
+    if (finishing || drag) return;
+    finishing = true;
+    $("app").classList.add("finishing");
+    const fx = $("celebration");
+    try {
+      if (!reduced.matches) {
+        fx.replaceChildren();
+        for (let i=0;i<24;i++) {
+          const p=document.createElement("i");
+          p.style.setProperty("--dx",Math.cos(i*2.399)* (65+i%5*19)+"px");
+          p.style.setProperty("--dy",Math.sin(i*2.399)* (65+i%5*19)+"px");
+          p.style.setProperty("--spin",(i%2?180:-180)+"deg");
+          p.style.background=["#b9ed61","#fff","#f6d77a","#76a83b"][i%4];
+          fx.append(p);
+        }
+        const a=animate(canvas,[{transform:"scale(1)"},{transform:"scale(.94)"},{transform:"scale(1.06)"},{transform:"scale(1)"}],650);
+        if (a) await a.finished.catch(()=>{});
+      }
+      showResult();
+      animate($("result"),[{opacity:0,transform:"translateY(14px)"},{opacity:1,transform:"translateY(0)"}],360);
+    } finally {
+      fx.replaceChildren();
+      $("app").classList.remove("finishing");
+      finishing=false;
+    }
+  };
+  document.addEventListener("click", ev => {
+    const btn=ev.target.closest("button");
+    if (!btn || btn.disabled || btn.classList.contains("tray-item")) return;
+    animate(btn,[{transform:"scale(1)"},{transform:"scale(.93)"},{transform:"scale(1.035)"},{transform:"scale(1)"}],260);
+  });
   $("resetBtn").onclick = () => $("confirmDialog").classList.remove("hidden");
   $("cancelReset").onclick = () => $("confirmDialog").classList.add("hidden");
   $("confirmReset").onclick = () => {
+    clearMotion();
     placed = [];
     nextZ = 0;
     draw();
@@ -398,6 +504,7 @@ function stopDrag(cancel, ev) {
     $("confirmDialog").classList.add("hidden");
   };
   $("restartBtn").onclick = () => {
+    clearMotion();
     placed = [];
     nextZ = 0;
     step = 0;
