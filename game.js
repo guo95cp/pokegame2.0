@@ -185,7 +185,7 @@ function stopDrag(cancel, ev) {
       if (
         !insideTrash(ev) &&
         inside(p) &&
-        placed.length < 20
+        placed.length < 50
       ) {
         const added = {
           id: d.id,
@@ -248,7 +248,7 @@ function stopDrag(cancel, ev) {
 
   function startNew(ev, id) {
     if (!bowlReady || drag || finishing || ev.button !== 0) return;
-    if (placed.length >= 20) { $("help").textContent = "재료는 최대 20개까지 선택할 수 있어요."; return; }
+    if (placed.length >= 50) { $("help").textContent = "재료는 최대 50개까지 선택할 수 있어요."; return; }
     ev.preventDefault();
     const item = ingredients[id];
     const ghost = document.createElement("img");
@@ -332,7 +332,7 @@ function stopDrag(cancel, ev) {
       const count = document.createElement("span"); count.textContent=String(qty);
       row.append(name,count); list.appendChild(row);
     }
-    $("receiptCount").textContent = `${placed.length} / 20`;
+    $("receiptCount").textContent = `${placed.length} / 50`;
   }
   function totals() {
     const keys = [
